@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
@@ -35,5 +35,12 @@
         <HintPath>..\SMTLIB2\SMTLIB2\bin\Debug\net6.0\SMTLIB2Parser.dll</HintPath>
       </Reference>
     </ItemGroup>
+
+<!--    <PropertyGroup>-->
+<!--        <TrimUnusedDependencies>true</TrimUnusedDependencies>-->
+<!--    </PropertyGroup>-->
+    <PropertyGroup>
+        <PublishTrimmed>true</PublishTrimmed>
+    </PropertyGroup>
 
 </Project>
