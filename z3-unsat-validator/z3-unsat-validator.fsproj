@@ -5,17 +5,19 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
-        <RootNamespace>TestProject1</RootNamespace>
+        <RootNamespace>Validator</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Program.fs" />
         <Content Include="..\SMTLIB2\SMTLIB2.sln">
           <Link>SMTLIB2.sln</Link>
         </Content>
         <Content Include="..\SMTLIB2\SMTLIB2\SMTLIB2.fsproj">
           <Link>SMTLIB2.fsproj</Link>
         </Content>
+        <Compile Include="Validator.fs" />
+        <Compile Include="Main.fs" />
+<!--        <Compile Include="Validator.fs" />-->
     </ItemGroup>
 
     <ItemGroup>

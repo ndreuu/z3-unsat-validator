@@ -1,11 +1,9 @@
-open System
-open NUnit.Framework
-open SMTLIB2
-open SMTLIB2.Parser
-open System.IO
-open System.Text.RegularExpressions
-
+namespace validator
 module Validator =
+    open SMTLIB2
+    open SMTLIB2.Parser
+    open System.IO
+
     let declarations =
         let isDecl =
             function
@@ -114,7 +112,7 @@ module Validator =
                 List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names (tasksToStrs tasks)
             | _ -> ()
 
-    let run =
+    let public run =
         fun (file: string) path ->
             let write =
                 file
@@ -123,13 +121,4 @@ module Validator =
 
             file |> Parser().ParseFile |> tasks |> write
 
-[<EntryPoint>]
-let main =
-    function
-    | [| file; path |] ->
-        let () = Validator.run file path
-        0
-    | _ ->
-        let () = printf "expected 2 arguments: file path"
 
-        1
