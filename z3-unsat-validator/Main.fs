@@ -2,14 +2,12 @@ module Main
 
 open validator
 
+let success () = 0
+
+let unSuccess () = 1
+
 [<EntryPoint>]
 let main =
-    function
-    | [| file; path |] ->
-        let () = Validator.run file path
-        0
-    | _ ->
-        let () = printf "expected 2 arguments: file path"
-
-        1
-
+  function
+  | [| file; path |] -> success <| Validator.run file path
+  | _ -> unSuccess <| printf "expected 2 arguments: file path"
