@@ -109,7 +109,7 @@ module Validator =
       | Some names ->
         let path name = path + "/" + name
 
-        List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names (tasksToStrs tasks)
+        List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names <| tasksToStrs tasks
       | _ -> ()
 
   let public run =
