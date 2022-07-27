@@ -10,4 +10,4 @@ let unSuccess () = 1
 let main =
   function
   | [| file; path |] -> success <| Validator.run file path
-  | _ -> unSuccess <| printf "expected 2 arguments: file path"
+  | _ -> unSuccess <| printf "Invalid input: expected 2 arguments: file path"
