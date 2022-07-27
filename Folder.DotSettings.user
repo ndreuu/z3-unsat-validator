@@ -1,6 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Fandrew_002FRiderProjects_002Fz3_002Dunsat_002Dvalidator_002D1_002FSMTLIB2_002FSMTLIB2_002Fbin_002FDebug_002Fnet6_002E0_002FSMTLIB2_002Edll/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=_002Fhome_002Fandrew_002FRiderProjects_002Fz3_002Dunsat_002Dvalidator_002D1_002FSMTLIB2_002FSMTLIB2_002Fbin_002FDebug_002Fnet6_002E0_002FSMTLIB2Parser_002Edll/@EntryIndexedValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
-  &lt;Assembly Path="/home/andrew/RiderProjects/z3-unsat-validator-1/TestProject1/bin/Debug/net6.0/TestProject1.dll" /&gt;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
