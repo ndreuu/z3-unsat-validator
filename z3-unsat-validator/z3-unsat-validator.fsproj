@@ -5,10 +5,10 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <RootNamespace>TestProject1</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="UnitTest1.fs" />
         <Compile Include="Program.fs" />
         <Content Include="..\SMTLIB2\SMTLIB2.sln">
           <Link>SMTLIB2.sln</Link>
