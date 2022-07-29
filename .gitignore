@@ -1,3 +1,4 @@
 /.idea/
 ./z3-unsat-validator/bin
 ./z3-unsat-validator/obj
+./z3-unsat-validator/bin/
