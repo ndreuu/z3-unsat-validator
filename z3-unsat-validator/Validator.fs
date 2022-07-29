@@ -1,122 +1,124 @@
 namespace validator
 
 module Validator =
-  open SMTLIB2
-  open SMTLIB2.Parser
-  open System.IO
+    open SMTLIB2
+    open SMTLIB2.Parser
+    open System.IO
 
-  let declarations =
-    let isDecl =
-      function
-      | Command (DeclareDatatype _)
-      | Command (DeclareDatatypes _)
-      | Command (DeclareFun _)
-      | Command (DeclareSort _)
-      | Command (DeclareConst _) -> true
-      | _ -> false
+    let declarations =
+        let isDecl =
+            function
+            | Command (DeclareDatatype _)
+            | Command (DeclareDatatypes _)
+            | Command (DeclareFun _)
+            | Command (DeclareSort _)
+            | Command (DeclareConst _) -> true
+            | _ -> false
 
-    List.filter isDecl
+        List.filter isDecl
 
 
-  let asserts =
-    let isProof =
-      function
-      | Command (Proof _) -> true
-      | _ -> false
+    let asserts =
+        let isProof =
+            function
+            | Command (Proof _) -> true
+            | _ -> false
 
-    List.filter isProof
-    >> List.head
-    >> function
-      | Command (Proof (h, Asserted a, s)) ->
-        let conclusion =
-          function
-          | HyperProof (_, _, s) -> Assert s
+        List.filter isProof
+        >> List.head
+        >> function
+            | Command (Proof (h, Asserted a, s)) ->
+                let conclusion =
+                    function
+                    | HyperProof (_, _, s) -> Assert s
 
-        let task =
-          function
-          | HyperProof (Asserted a, ps, s) ->
-            let conclusions = ps |> List.map conclusion
-            (Assert a) :: conclusions @ [ Assert <| Not s ]
+                let task =
+                    function
+                    | HyperProof (Asserted a, ps, s) ->
+                        let conclusions = ps |> List.map conclusion
+                        (Assert a) :: conclusions @ [ Assert <| Not s ]
 
-        let rec collect =
-          function
-          | (HyperProof (_, hps, _) as hypProof) ->
-            let cur = task hypProof
+                let rec collect =
+                    function
+                    | (HyperProof (_, hps, _) as hypProof) ->
+                        let cur = task hypProof
 
-            let childs hps =
-              let rec helper acc =
-                function
-                | HyperProof (_, hps, _) as hypProof :: hs -> helper (task hypProof :: acc) (hps @ hs)
-                | [] -> acc
+                        let childs hps =
+                            let rec helper acc =
+                                function
+                                | HyperProof (_, hps, _) as hypProof :: hs -> helper (task hypProof :: acc) (hps @ hs)
+                                | [] -> acc
 
-              helper [ cur ] hps
+                            helper [ cur ] hps
 
-            childs hps
+                        childs hps
 
-        let modesPones =
-          [ Assert <| Not a; conclusion h ]
+                let modesPones = [ Assert <| Not a; conclusion h ]
 
-        modesPones :: collect h |> List.rev |> Some
-      | _ -> None
-
-  let tasks =
-    fun cmds ->
-      match asserts cmds with
-      | Some asserts ->
-        Some
-        <| List.map (fun x -> declarations cmds @ x @ [ Command CheckSat ]) asserts
-      | _ -> None
-
-  let tasksToStrs =
-    function
-    | Some cmds ->
-      List.fold
-        (fun acc x ->
-          let a =
-            List.fold (fun acc x -> sprintf "%s%s\n\n" acc <| x.ToString()) "" x
-
-          (sprintf "(set-logic UFDT)\n\n%s" a) :: acc)
-        []
-        cmds
-      |> List.rev
-    | _ -> []
-
-  let write =
-    fun path fName tasks ->
-      let names =
-        function
-        | Some (cmds: 'a list) ->
-          let _, res =
-            List.fold
-              (fun (i, acc) _ ->
-                if i > 0 then
-                  (i - 1, i :: acc)
-                else
-                  (i, acc))
-              (cmds.Length, [])
-              cmds
-
-          res
-          |> List.map (fun x -> fName + "___" + x.ToString() + ".smt2")
-          |> List.rev
-          |> function
-            | _ :: xs -> xs |> List.rev |> Some
+                modesPones :: collect h |> List.rev |> Some
             | _ -> None
 
-        | _ -> None
+    let tasks =
+        fun cmds ->
+            match asserts cmds with
+            | Some asserts ->
+                Some
+                <| List.map (fun x -> declarations cmds @ x @ [ Command CheckSat ]) asserts
+            | _ -> None
 
-      match names tasks with
-      | Some names ->
-        let path name = path + "/" + name
+    let tasksToStrs =
+        function
+        | Some cmds ->
+            List.fold
+                (fun acc x ->
+                    let a = List.fold (fun acc x -> sprintf "%s%s\n\n" acc <| x.ToString()) "" x
 
-        List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names <| tasksToStrs tasks
-      | _ -> ()
+                    (sprintf "(set-logic UFDT)\n\n%s" a) :: acc)
+                []
+                cmds
+            |> function
+                | _ :: xs -> xs |> List.rev
+                | _ -> []
+        | _ -> []
 
-  let public run =
-    fun (file: string) path ->
-      let write =
-        file
-        |> Path.GetFileNameWithoutExtension
-        |> write path
+    let write =
+        fun path fName tasks ->
+            let names =
+                function
+                | Some (cmds: 'a list) ->
+                    let _, res =
+                        List.fold
+                            (fun (i, acc) _ ->
+                                if i > 0 then
+                                    (i - 1, i :: acc)
+                                else
+                                    (i, acc))
+                            (cmds.Length, [])
+                            cmds
 
-      file |> Parser().ParseFile |> tasks |> write
+                    res
+                    |> List.map (fun x -> fName + "___" + x.ToString() + ".smt2")
+                    |> List.rev
+                    |> function
+                        | _ :: xs -> xs |> List.rev |> Some
+                        | _ -> None
+                //            |> Some
+
+                | _ -> None
+
+            match names tasks with
+            | Some names ->
+                let path name = path + "/" + name
+
+                List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names
+                <| tasksToStrs tasks
+            | _ -> ()
+
+    let public run =
+        fun (file: string) path ->
+            let write =
+                file
+                |> Path.GetFileNameWithoutExtension
+                |> write path
+
+            file |> Parser().ParseFile |> tasks |> write
