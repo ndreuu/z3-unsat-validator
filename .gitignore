@@ -6,3 +6,4 @@
 ./Tests/obj
 ./Tests/bin
 ./z3-unsat-validator.sln.DotSettings.user
+.gitignore
