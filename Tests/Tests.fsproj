@@ -9,7 +9,6 @@
 
     <ItemGroup>
         <Compile Include="Tests.fs" />
-        <Content Include="samples\drop_id\drop_id.smt2" />
     </ItemGroup>
 
     <ItemGroup>
