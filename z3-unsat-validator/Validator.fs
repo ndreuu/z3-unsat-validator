@@ -27,36 +27,31 @@ module Validator =
     List.filter isProof
     >> List.head
     >> function
-      | Command (Proof (h, Asserted a, s)) ->
-        let conclusion =
-          function
-          | HyperProof (_, _, s) -> Assert s
+      | Command (Proof (h, Asserted a, _)) ->
+        let conclusion (HyperProof (_, _, s)) = Assert s
 
-        let task =
-          function
-          | HyperProof (Asserted a, ps, s) ->
-            let conclusions = ps |> List.map conclusion
-            (Assert a) :: conclusions @ [ Assert <| Not s ]
+        let task (HyperProof (Asserted a, ps, s)) =
+          let conclusions = ps |> List.map conclusion
+          (Assert a) :: conclusions @ [ Assert <| Not s ]
 
-        let rec collect =
-          function
-          | (HyperProof (_, hps, _) as hypProof) ->
-            let cur = task hypProof
+        let rec collect (HyperProof (_, hps, _) as hypProof) =
+          let cur = task hypProof
 
-            let childs hps =
-              let rec helper acc =
-                function
-                | HyperProof (_, hps, _) as hypProof :: hs -> helper (task hypProof :: acc) (hps @ hs)
-                | [] -> acc
+          let childs hps =
+            let rec helper acc =
+              function
+              | HyperProof (_, hps, _) as hypProof :: hs -> helper (task hypProof :: acc) (hps @ hs)
+              | [] -> acc
 
-              helper [ cur ] hps
+            helper [ cur ] hps
 
-            childs hps
+          childs hps
 
         let modesPones =
           [ Assert <| Not a; conclusion h ]
 
-        modesPones :: collect h |> List.rev |> Some
+        //        modesPones ::
+        collect h |> List.rev |> Some
       | _ -> None
 
   let tasks =
@@ -75,12 +70,12 @@ module Validator =
           let a =
             List.fold (fun acc x -> sprintf "%s%s\n\n" acc <| x.ToString()) "" x
 
-          (sprintf "(set-logic UFDT)\n\n%s" a) :: acc)
+          (sprintf ";(set-logic UFDT)\n\n%s" a) :: acc)
         []
         cmds
-      |> function
-        | _ :: xs -> xs |> List.rev
-        | _ -> []
+    //      |> function
+//        | _ :: xs -> xs |> List.rev
+//        | _ -> []
     | _ -> []
 
   let write =
@@ -99,17 +94,18 @@ module Validator =
               cmds
 
           res
-          |> List.map (fun x -> fName + "___" + x.ToString() + ".smt2")
+          |> List.map (fun x -> sprintf "___%s.smt2" <| x.ToString())
           |> List.rev
-          |> function
-            | _ :: xs -> xs |> List.rev |> Some
-            | _ -> None
+          |> Some
+        //          |> function
+//            | _ :: xs -> xs |> List.rev |> Some
+//            | _ -> None
 
         | _ -> None
 
       match names tasks with
       | Some names ->
-        let path name = path + "/" + name
+        let path name = sprintf "%s/%s" path name
 
         List.fold2 (fun _ name content -> File.WriteAllText(path name, content)) () names
         <| tasksToStrs tasks
